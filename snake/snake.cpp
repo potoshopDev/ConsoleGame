@@ -1,0 +1,15 @@
+// Copyright © 2022 Oleg Belekhov. All Right Reserved.
+// Licensed under the CC0 License
+
+// snake.cpp : This file contains the 'main' function. Program execution begins and ends there.
+//
+//OOP training
+
+import Engine;
+
+int main()
+{
+	core::Engine Snake;
+	Snake.Test2();
+}
+
