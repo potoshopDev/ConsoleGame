@@ -21,10 +21,10 @@ namespace emodule
 
 	};
 
-	export using func_null_args = std::function<void()>;
-	export using func_one_arg = std::function<void(int)>;
-	export using func_null_or_one_arg = std::variant<func_null_args, func_one_arg>;
-	using QueueSubs = std::vector < std::pair<event_type, func_null_or_one_arg>>;
+	export using lambda_null_args = std::function<void()>;
+	export using lambda_one_arg = std::function<void(int)>;
+	export using lambda_null_or_one_arg = std::variant<lambda_null_args, lambda_one_arg>;
+	using QueueSubs = std::vector < std::pair<event_type, lambda_null_or_one_arg>>;
 	using QueueEvent = std::vector<std::pair<emodule::event_type, std::variant<bool, int>>>;
 
 	export
@@ -35,7 +35,7 @@ namespace emodule
 
 	public:
 
-		virtual void subscribe(func_null_or_one_arg func__, event_type et__) = 0;
+		virtual void subscribe(lambda_null_or_one_arg func__, event_type et__) = 0;
 		virtual void create_event(event_type et__) = 0;
 		virtual void create_event(event_type et__, int arg__) = 0;
 		virtual void call() = 0;
@@ -46,7 +46,7 @@ export
 	class Event : public IEvent
 	{
 	public:
-		virtual void subscribe(func_null_or_one_arg func__, event_type et__) override;
+		virtual void subscribe(lambda_null_or_one_arg func__, event_type et__) override;
 		virtual void create_event(event_type et__) override;
 		virtual void create_event(event_type et__, int arg__) override;
 		virtual void call() override;
@@ -57,7 +57,7 @@ export
 		QueueEvent queue_event;
 	};
 
-	void Event::subscribe(func_null_or_one_arg func__, event_type et__)
+	void Event::subscribe(lambda_null_or_one_arg func__, event_type et__)
 	{
 		queue_subs.push_back(std::pair(et__, func__));
 	}
@@ -81,14 +81,14 @@ export
 					bool have_arg = true;
 					int arg = 0;
 					overload o{
-						[&have_arg](bool& b) {have_arg = false; },
-						[&arg](int& i) {arg = i; }
+						[&have_arg](bool& b) {have_arg = false; }, // event haven't arg
+						[&arg](int& i) {arg = i; } //ok, event have arg
 					};
 					std::visit(o, e.second);
 
 					overload o2{
-						[](func_null_args& f) { f(); },
-						[&have_arg, &arg](func_one_arg& f) { have_arg ? f(arg) : f(0); }
+						[](lambda_null_args& f) { f(); }, // call lymbda no param
+						[&have_arg, &arg](lambda_one_arg& f) { have_arg ? f(arg) : f(0); } // call lymda one param
 					};
 
 					std::visit(o2, s.second);

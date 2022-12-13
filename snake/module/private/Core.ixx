@@ -15,7 +15,7 @@ namespace core
 	{
 	public:
 
-		static void subscribe(emodule::func_null_or_one_arg func__, emodule::event_type et__)
+		static void subscribe(emodule::lambda_null_or_one_arg func__, emodule::event_type et__)
 		{
 			if (event_manag.get())
 			{
