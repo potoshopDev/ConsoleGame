@@ -5,8 +5,6 @@ export module Event;
 import Source;
 import <functional>;
 import <vector>;
-import <algorithm>;
-import <iterator>;
 import <variant>;
 
 namespace emodule
@@ -31,14 +29,14 @@ namespace emodule
 		class IEvent
 	{
 	public:
-		virtual ~IEvent() {};
+		virtual inline ~IEvent() {};
 
 	public:
 
-		virtual void subscribe(lambda_null_or_one_arg func__, event_type et__) = 0;
-		virtual void create_event(event_type et__) = 0;
-		virtual void create_event(event_type et__, int arg__) = 0;
-		virtual void call() = 0;
+		virtual inline void subscribe(lambda_null_or_one_arg func__, event_type et__) noexcept = 0;
+		virtual inline void create_event(event_type et__) noexcept = 0;
+		virtual inline void create_event(event_type et__, int arg__) noexcept = 0;
+		virtual inline void call() noexcept = 0;
 
 	};
 
@@ -46,10 +44,10 @@ export
 	class Event : public IEvent
 	{
 	public:
-		virtual void subscribe(lambda_null_or_one_arg func__, event_type et__) override;
-		virtual void create_event(event_type et__) override;
-		virtual void create_event(event_type et__, int arg__) override;
-		virtual void call() override;
+		virtual inline void subscribe(lambda_null_or_one_arg func__, event_type et__) noexcept override;
+		virtual inline void create_event(event_type et__) noexcept override;
+		virtual inline void create_event(event_type et__, int arg__) noexcept override;
+		virtual inline void call() noexcept override;
 
 	private:
 
@@ -57,22 +55,22 @@ export
 		QueueEvent queue_event;
 	};
 
-	void Event::subscribe(lambda_null_or_one_arg func__, event_type et__)
+	void Event::subscribe(lambda_null_or_one_arg func__, event_type et__) noexcept
 	{
 		queue_subs.push_back(std::pair(et__, func__));
 	}
 
-	void Event::create_event(event_type et__)
+	void Event::create_event(event_type et__) noexcept
 	{
 		queue_event.push_back(std::pair(et__, false));
 	}
 
-	void Event::create_event(event_type et__, int arg__)
+	void Event::create_event(event_type et__, int arg__) noexcept
 	{
 		queue_event.push_back(std::pair(et__, arg__));
 	}
 
-	void Event::call()
+	void Event::call() noexcept 
 	{
 		for (auto& e : queue_event)
 			for (auto& s : queue_subs)
@@ -81,14 +79,14 @@ export
 					bool have_arg = true;
 					int arg = 0;
 					overload o{
-						[&have_arg](bool& b) {have_arg = false; }, // event haven't arg
-						[&arg](int& i) {arg = i; } //ok, event have arg
+						[&have_arg](bool& b) noexcept {have_arg = false; }, // event haven't arg
+						[&arg](int& i) noexcept {arg = i; } //ok, event have arg
 					};
 					std::visit(o, e.second);
 
 					overload o2{
-						[](lambda_null_args& f) { f(); }, // call lymbda no param
-						[&have_arg, &arg](lambda_one_arg& f) { have_arg ? f(arg) : f(0); } // call lymda one param
+						[](lambda_null_args& f) noexcept { f(); }, // call lymbda no param
+						[&have_arg, &arg](lambda_one_arg& f) noexcept { have_arg ? f(arg) : f(0); } // call lymda one param
 					};
 
 					std::visit(o2, s.second);

@@ -1,5 +1,8 @@
 // Copyright © 2022 Oleg Belekhov. All Right Reserved.
 // Licensed under the CC0 License
+
+//module Event, Gameplay, Input
+
 export module Core;
 import Event;
 import <memory>;
@@ -15,28 +18,28 @@ namespace core
 	{
 	public:
 
-		static void subscribe(emodule::lambda_null_or_one_arg func__, emodule::event_type et__)
+		static inline void subscribe(emodule::lambda_null_or_one_arg func__, emodule::event_type et__) noexcept
 		{
 			if (event_manag.get())
 			{
 				event_manag.get()->subscribe(func__, et__);
 			}
 		}
-		static void create_event(emodule::event_type et__)
+		static inline void create_event(emodule::event_type et__) noexcept
 		{
 			if (event_manag.get())
 			{
 				event_manag.get()->create_event(et__);
 			}
 		}
-		static void create_event(emodule::event_type et__, int arg)
+		static inline void create_event(emodule::event_type et__, int arg) noexcept
 		{
 			if (event_manag.get())
 			{
 				event_manag.get()->create_event(et__, arg);
 			}
 		}
-		static void call()
+		static inline void call() noexcept
 		{
 			if (event_manag.get())
 			{
