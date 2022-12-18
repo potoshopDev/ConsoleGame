@@ -5,7 +5,7 @@
 //
 //OOP training
 
-import Engine;
+#include "Engine.h"
 
 int main()
 {
