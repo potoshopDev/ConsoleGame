@@ -21,6 +21,7 @@ namespace emodule
 	{
 		std::vector<str_end_pos> position;
 		std::vector<spoint> vector_velocity;
+		std::vector<CHAR_INFO> char_buffer;
 		std::vector<short> color;
 	};
 
@@ -37,7 +38,7 @@ namespace emodule
 
 		virtual inline void Initilize(shape_data* sd__, str_end_pos pos__) noexcept = 0;
 		virtual inline size_t GetID() noexcept = 0;
-		virtual inline void Update(update_func uf__) noexcept = 0;
+		virtual inline void Update_Draw(update_func uf__) noexcept = 0;
 		virtual inline void SetColor(short col__) noexcept = 0;
 
 
@@ -48,7 +49,7 @@ namespace emodule
 	public:
 		virtual inline void Initilize(shape_data* sd__, str_end_pos pos__) noexcept override;
 		virtual inline size_t GetID() noexcept override;
-		virtual inline void Update(update_func uf__) noexcept override;
+		virtual inline void Update_Draw(update_func uf__) noexcept override;
 		virtual inline void SetColor(short col__) noexcept override;
 
 	protected:
@@ -115,7 +116,7 @@ namespace emodule
 		return ID;
 	}
 
-	void StaticShape::Update(update_func uf__) noexcept
+	void StaticShape::Update_Draw(update_func uf__) noexcept
 	{
 		auto ref_data = GetData();
 		auto id = GetID();

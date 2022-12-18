@@ -17,6 +17,8 @@ namespace emodule
 		EVENT_STOP,
 		EVENT_ERROR,
 		EVENT_UPDATE,
+		EVENT_INPUT,
+
 
 	};
 
@@ -24,6 +26,7 @@ namespace emodule
 	enum error_code : int
 	{
 		ERROR_SYNC = 1,
+		ERROR_INIT,
 	};
 
 	using lambda_null_args = std::function<void()>;
@@ -98,7 +101,8 @@ namespace emodule
 
 	void Event::call() noexcept
 	{
-		for (auto& e : queue_event)
+		auto qe = std::move(queue_event);
+		for (auto& e : qe)
 			for (auto& s : queue_subs)
 				if ((s.second.first == e.first))
 				{
@@ -117,6 +121,6 @@ namespace emodule
 					 std::visit(o2, s.second.second);
 				}
 
-		queue_event.clear();
+		qe.clear();
 	}
 }

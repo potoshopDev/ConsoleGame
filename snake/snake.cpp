@@ -10,6 +10,6 @@
 int main()
 {
 	core::Engine Snake;
-	Snake.Test2();
+	Snake.Update_Draw();
 }
 
