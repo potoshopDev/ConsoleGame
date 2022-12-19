@@ -25,11 +25,11 @@ namespace emodule
 		std::vector<short> color;
 	};
 
-	void update_empty(shape_data* sd__, size_t ID) ;
-	//void update_linear(shape_data* sd__, size_t ID);
-	//	void update_blink(shape_data* sd__, size_t ID);
+	void update_empty(shape_data* sd__, size_t ID, COORD buf_suz) ;
+	void update_linear(shape_data* sd__, size_t ID, COORD buf_suz);
+	//	void update_blink(shape_data* sd__, size_t ID, COORD buf_suz);
 
-	using update_func = void(*) (shape_data*, size_t);
+	using update_func = void(*) (shape_data*, size_t, COORD);
 
 	class IShape
 	{
@@ -122,7 +122,7 @@ namespace emodule
 		auto id = GetID();
 		if (!ref_data || id < 0) return;
 
-		uf__(ref_data, id);
+		uf__(ref_data, id, COORD{100, 25}); //TODO: refactoring 
 	}
 
 	void StaticShape::SetColor(short col__) noexcept

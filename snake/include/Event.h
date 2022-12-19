@@ -27,6 +27,7 @@ namespace emodule
 	{
 		ERROR_SYNC = 1,
 		ERROR_INIT,
+		ERROR_OUT_OF_RANGE,
 	};
 
 	using lambda_null_args = std::function<void()>;

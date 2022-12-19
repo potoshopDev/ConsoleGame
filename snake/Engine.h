@@ -43,7 +43,7 @@ namespace core
 			const auto snake_pos = emodule::str_end_pos({ g_WinSizeX / 2 - snake_size, g_WinSizeY / 2 }, { g_WinSizeX / 2, g_WinSizeY / 2 });
 			shapes__.push_back(static_cast<std::unique_ptr < emodule::IShape>>(new emodule::Snake(&data__, snake_pos)));
 
-			auto tmp_update = [this]() { shapes__[0]->Update_Draw(emodule::update_empty); };
+			auto tmp_update = [this]() { shapes__[0]->Update_Draw(emodule::update_linear); };
 			core::EventManager::subscribe(tmp_update, emodule::event_type::EVENT_UPDATE);
 
 			const auto wall_pos1 = emodule::str_end_pos({ 0, 0 }, { g_WinSizeX, 0 });
