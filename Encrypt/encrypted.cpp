@@ -22,6 +22,7 @@ std::string encrypted_line::gnr_direction_line() {
 
   return std::string(tmp_ss.str());
 }
+
 std::string encrypted_line::gnr_body_line() {
 
   auto pos = rand() % pos_end_range; // Random position for writing a word
@@ -34,13 +35,13 @@ std::string encrypted_line::gnr_body_line() {
   }
 
   for (const auto e : word) {
-    if (str_tmp.size() == word_size)
+    if (str_tmp.size() == pos_end_word)
       str_tmp += " ";
 
     str_tmp += e;
   }
 
-  if (str_tmp.size() == word_size)
+  if (str_tmp.size() == pos_end_word)
     str_tmp += " ";
 
   for (auto i = str_tmp.size(); i < line_size; ++i) {
@@ -49,6 +50,7 @@ std::string encrypted_line::gnr_body_line() {
 
   return str_tmp;
 }
+
 void encrypted_line::generate_line() {
 
   auto dir_str = gnr_direction_line(); // hex format line number
@@ -67,7 +69,9 @@ std::string encrypted_line::GetLine() {
   return line;
 }
 
-inline char GetSymbol() { return 33 + rand() % 32; }
+// ASCII 33 to 64 random symbol
+inline char GetSymbol() { return smb_str_range + rand() % smb_end_range; }
+
 void toupper_line(std::string &line) {
   std::for_each(line.begin(), line.end(), [](auto &e) { e = std::toupper(e); });
 }

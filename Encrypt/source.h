@@ -7,6 +7,8 @@ namespace encrypted {
 constexpr int num_str_range = 100000;
 constexpr int num_end_range = 999999;
 constexpr int pos_end_range = 5;
-constexpr int word_size = 4;
+constexpr int pos_end_word = 4;
 constexpr int line_size = 9;
+constexpr int smb_str_range = 33;
+constexpr int smb_end_range = 32;
 } // namespace encrypted
