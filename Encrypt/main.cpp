@@ -3,6 +3,7 @@
 //
 // Fanart based on the mini-game "hacker" fallout 4
 
+#include "source.h"
 #define FMT_HEADER_ONLY
 
 #include "../fmt/include/fmt/color.h"
@@ -11,6 +12,8 @@
 #include "encrypted.h"
 #include "help.h"
 
+// random
+#include <cstdlib>
 #include <ctime>
 
 int main() {
@@ -19,14 +22,20 @@ int main() {
     srand(time(0));
     encrypted::enable_vir_term();
 
+    encrypted::Wordbook wb(encrypted::load_wb(encrypted::file_name));
     // Test class encrypted_line
     for (auto i = 0; i < 20; ++i) {
+      auto ind1 = rand() % (wb.get_size());
+      auto ind2 = rand() % (wb.get_size());
 
-      encrypted::encrypted_line test("cout");
-      encrypted::encrypted_line test2("game");
+      encrypted::encrypted_line test((rand() % 100 < 10) ? wb.get_word(ind1)
+                                                         : "");
 
-      fmt::print(fmt::fg(fmt::color::green_yellow), test.GetLine());
-      fmt::print(fmt::fg(fmt::color::green_yellow), test2.GetLine());
+      encrypted::encrypted_line test2((rand() % 100 < 10) ? wb.get_word(ind2)
+                                                          : "");
+
+      fmt::print(fmt::fg(fmt::color::green_yellow), test.get_line());
+      fmt::print(fmt::fg(fmt::color::green_yellow), test2.get_line());
       fmt::print("\n");
     }
     /////////////////////////////

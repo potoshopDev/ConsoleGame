@@ -2,6 +2,7 @@
 // Licensed under the CC0 License
 //
 // Fanart based on the mini-game "hacker" fallout 4
+#pragma once
 
 #include <string>
 
