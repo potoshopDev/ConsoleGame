@@ -5,8 +5,10 @@
 
 #include "encrypted.h"
 #include <algorithm>
+#include <ctime>
 #include <fstream>
 #include <sstream>
+#include <stdlib.h>
 
 #include "help.h"
 
@@ -30,7 +32,7 @@ wb load_wb(const std::string &file_name) {
 
 std::string EncryptedLine::gnr_direction_line() {
 
-  auto number{num_str_range + rand() % num_end_range};
+  auto number{num_str_range + std::rand() % num_end_range};
 
   std::stringstream tmp_ss;
   tmp_ss << std::hex << std::showbase << number;
@@ -40,7 +42,7 @@ std::string EncryptedLine::gnr_direction_line() {
 
 std::string EncryptedLine::gnr_body_line() {
 
-  auto pos{rand() % pos_end_range}; // Random position for writing a word
+  auto pos{rand() % pos_end_range}; // std::random position for writing a word
 
   std::string str_tmp;
 
@@ -86,15 +88,15 @@ std::string EncryptedLine::get_line() {
   return m_line;
 }
 
-// ASCII 33 to 64 random symbol
-inline char get_symbol() { return smb_str_range + rand() % smb_end_range; }
+// ASCII 33 to 64 std::random symbol
+inline char get_symbol() { return smb_str_range + std::rand() % smb_end_range; }
 
 void toupper_string(std::string &line) {
   std::for_each(line.begin(), line.end(), [](auto &e) { e = std::toupper(e); });
 }
 
 EncryptedMenu::EncryptedMenu() {
-
+  m_color = fmt::color::green_yellow;
   // initilized vector
   for (auto i{0}; i < max_lines; ++i) {
 
@@ -105,17 +107,31 @@ EncryptedMenu::EncryptedMenu() {
   // initilized first word == encrypted word
   Wordbook wb(load_wb(file_name));
 
-  const int str_wrd_ind = rand() % (wb.get_size() - max_word);
-  const auto str_lns = rand() % (max_lines);
+  const int str_wrd_ind = std::rand() % (wb.get_size() - max_word);
+  const auto str_lns = std::rand() % (max_lines);
 
   std::vector<int> tmp_lns{str_lns}; // saving of the occupied line num
+
   encrypted_wrd = wb.get_word(str_wrd_ind);
   toupper_string(encrypted_wrd);
 
   pchange(str_lns, str_wrd_ind, wb);
   ////////////////////
 
-  // initilized the others word
+  gnr_fakeline(tmp_lns, wb, str_wrd_ind);
+}
+
+void EncryptedMenu::pchange(int pos, int id, const Wordbook &wb) {
+  // m_data_lines.at(pos).reset();
+  m_data_lines.at(pos) =
+      std::make_unique<EncryptedLine>(EncryptedLine(wb.get_word(id)));
+}
+
+void EncryptedMenu::gnr_fakeline(std::vector<int> &v, const Wordbook &wb,
+                                 const int str_id) {
+
+  std::srand(std::time(0));
+
   for (auto i{0}; i < max_word; ++i) {
     int new_wrd_pos{0};
 
@@ -123,24 +139,31 @@ EncryptedMenu::EncryptedMenu() {
     for (auto bid_cor{true}; bid_cor;) {
 
       bid_cor = false;
-      new_wrd_pos = rand() % max_lines;
+      new_wrd_pos = std::rand() % max_lines;
 
-      std::for_each(tmp_lns.begin(), tmp_lns.end(),
-                    [&bid_cor, new_wrd_pos](const auto &e) {
-                      bid_cor = bid_cor ? true : e == new_wrd_pos;
-                    });
+      std::for_each(v.begin(), v.end(), [&bid_cor, new_wrd_pos](const auto &e) {
+        bid_cor = bid_cor ? true : e == new_wrd_pos;
+      });
     }
 
-    tmp_lns.push_back(new_wrd_pos);
-    const int new_wrd_ind = str_wrd_ind + rand() % max_word;
+    v.push_back(new_wrd_pos);
+    const int new_wrd_ind = str_id / 2 + std::rand() % max_word;
 
     pchange(new_wrd_pos, new_wrd_ind, wb);
   }
 }
 
-void EncryptedMenu::pchange(int pos, int id, const Wordbook &wb) {
-  // m_data_lines.at(pos).reset();
-  m_data_lines.at(pos) =
-      std::make_unique<EncryptedLine>(EncryptedLine(wb.get_word(id)));
+const std::string EncryptedMenu::to_str() {
+  std::string tmp_str{};
+  std::for_each(m_data_lines.begin(), m_data_lines.end(),
+                [&tmp_str, i = 0](const auto &e) mutable {
+                  if (i == 2) {
+                    tmp_str += "\n";
+                    i = 0;
+                  }
+                  tmp_str += e->get_line();
+                  ++i;
+                });
+  return tmp_str;
 }
 } // namespace encrypted

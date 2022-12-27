@@ -11,6 +11,8 @@
 #include <string>
 #include <vector>
 
+#include "../fmt/include/fmt/color.h"
+
 namespace encrypted {
 
 using wb = std::vector<std::string>;
@@ -18,6 +20,17 @@ using wb = std::vector<std::string>;
 inline char get_symbol();
 void toupper_string(std::string &line);
 wb load_wb(const std::string &file_name);
+
+class Menu {
+public:
+  virtual ~Menu(){};
+  virtual const std::string to_str() = 0;
+  virtual const fmt::color get_color() noexcept { return m_color; };
+  operator const std::string() { return to_str(); }
+
+protected:
+  fmt::color m_color{fmt::color::white};
+};
 
 class Wordbook {
 public:
@@ -47,26 +60,12 @@ private:
   std::string m_word;
 };
 
-class EncryptedMenu {
+class EncryptedMenu : public Menu {
 public:
   using EM = std::unique_ptr<encrypted::EncryptedLine>;
   EncryptedMenu();
 
-  const std::string to_str() {
-    std::string tmp_str{};
-    std::for_each(m_data_lines.begin(), m_data_lines.end(),
-                  [&tmp_str, i = 0](const auto &e) mutable {
-                    if (i == 2) {
-                      tmp_str += "\n";
-                      i = 0;
-                    }
-                    tmp_str += e->get_line();
-                    ++i;
-                  });
-    return tmp_str;
-  }
-
-  operator const std::string() { return to_str(); }
+  const std::string to_str() override;
 
   [[nodiscard]] inline const std::string get() const noexcept {
     return encrypted_wrd;
@@ -74,10 +73,25 @@ public:
 
 private:
   void pchange(int pos, int id, const Wordbook &wb);
+  void gnr_fakeline(std::vector<int> &v, const Wordbook &wb, const int str_id);
 
 private:
   std::vector<EM> m_data_lines{};
   std::string encrypted_wrd{};
+};
+
+class HelloMenu : public Menu {
+public:
+  HelloMenu()
+      : m_menu_text("Hello! Welcome to encryped!\n"
+                    "Try to guess the password\n\n") {
+    m_color = fmt::color::green;
+  };
+
+  const std::string to_str() override { return m_menu_text; }
+
+private:
+  std::string m_menu_text;
 };
 
 } // namespace encrypted

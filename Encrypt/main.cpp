@@ -3,15 +3,10 @@
 //
 // Fanart based on the mini-game "hacker" fallout 4
 
-// random
-#include <cstdlib>
-#include <ctime>
-
 ///////////////////////////////////////////////
 // need FMT lib: https://github.com/fmtlib/fmt
 #define FMT_HEADER_ONLY
 
-#include "../fmt/include/fmt/color.h"
 #include "../fmt/include/fmt/core.h"
 ///////////////////////////////////////////////
 ///////////////////////////////////////////////
@@ -24,28 +19,15 @@
 int main() {
 
   try {
-    srand(time(nullptr));
+    std::srand(std::time(0));
+
     encrypted::enable_vir_term();
 
+    encrypted::HelloMenu hello_menu;
     encrypted::EncryptedMenu encrypted_menu;
 
-    fmt::print(fmt::fg(fmt::color::green_yellow), encrypted_menu.to_str());
-    // encrypted::Wordbook wb(encrypted::load_wb(encrypted::file_name));
-    // // Test class EncryptedLine
-    // for (auto i{0}; i < 20; ++i) {
-    //   auto ind1{rand() % (wb.get_size())};
-    //   auto ind2{rand() % (wb.get_size())};
-    //
-    //   encrypted::EncryptedLine test((rand() % 100 < 10) ? wb.get_word(ind1)
-    //                                                     : "");
-    //   encrypted::EncryptedLine test2((rand() % 100 < 10) ? wb.get_word(ind2)
-    //                                                      : "");
-    //
-    //   fmt::print(fmt::fg(fmt::color::green_yellow), test.get_line());
-    //   fmt::print(fmt::fg(fmt::color::green_yellow), test2.get_line());
-    //   fmt::print("\n");
-    // }
-    /////////////////////////////
+    fmt::print(fmt::fg(hello_menu.get_color()), hello_menu.to_str());
+    fmt::print(fmt::fg(encrypted_menu.get_color()), encrypted_menu.to_str());
 
     return 0;
   }
