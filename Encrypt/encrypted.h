@@ -4,6 +4,10 @@
 // Fanart based on the mini-game "hacker" fallout 4
 #pragma once
 
+#include "source.h"
+
+#include <algorithm>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -17,20 +21,20 @@ wb load_wb(const std::string &file_name);
 
 class Wordbook {
 public:
-  Wordbook(wb words) : wordbook__{words} {};
+  Wordbook(wb words) : m_wordbook{words} {};
 
   [[nodiscard]] inline std::string get_word(int index) const {
-    return wordbook__.at(index);
+    return m_wordbook.at(index);
   }
-  [[nodiscard]] inline size_t get_size() const { return wordbook__.size(); }
+  [[nodiscard]] inline size_t get_size() const { return m_wordbook.size(); }
 
 private:
-  wb wordbook__;
+  wb m_wordbook;
 };
 
-class encrypted_line {
+class EncryptedLine {
 public:
-  encrypted_line(const std::string word__) : word{word__} {}
+  EncryptedLine(const std::string word__) : m_word{word__} {}
   std::string get_line();
 
 private:
@@ -39,8 +43,41 @@ private:
   std::string gnr_body_line();
 
 private:
-  std::string line;
-  std::string word;
+  std::string m_line;
+  std::string m_word;
+};
+
+class EncryptedMenu {
+public:
+  using EM = std::unique_ptr<encrypted::EncryptedLine>;
+  EncryptedMenu();
+
+  const std::string to_str() {
+    std::string tmp_str{};
+    std::for_each(m_data_lines.begin(), m_data_lines.end(),
+                  [&tmp_str, i = 0](const auto &e) mutable {
+                    if (i == 2) {
+                      tmp_str += "\n";
+                      i = 0;
+                    }
+                    tmp_str += e->get_line();
+                    ++i;
+                  });
+    return tmp_str;
+  }
+
+  operator const std::string() { return to_str(); }
+
+  [[nodiscard]] inline const std::string get() const noexcept {
+    return encrypted_wrd;
+  }
+
+private:
+  void pchange(int pos, int id, const Wordbook &wb);
+
+private:
+  std::vector<EM> m_data_lines{};
+  std::string encrypted_wrd{};
 };
 
 } // namespace encrypted

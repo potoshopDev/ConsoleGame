@@ -14,4 +14,6 @@ constexpr int line_size{9};
 constexpr int smb_str_range{33};
 constexpr int smb_end_range{32};
 const std::string file_name{"word.txt"};
+constexpr int max_lines{40};
+constexpr int max_word{8};
 } // namespace encrypted
