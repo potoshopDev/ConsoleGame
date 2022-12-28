@@ -11,6 +11,7 @@
 #include <stdlib.h>
 
 #include "help.h"
+#include "source.h"
 
 namespace encrypted {
 
@@ -100,7 +101,8 @@ EncryptedMenu::EncryptedMenu() {
   // initilized vector
   for (auto i{0}; i < max_lines; ++i) {
 
-    m_data_lines.push_back(std::make_unique<EncryptedLine>(EncryptedLine("")));
+    m_data_lines.emplace_back(
+        std::make_unique<EncryptedLine>(EncryptedLine("")));
   }
   ////////////////////
 
@@ -130,24 +132,21 @@ void EncryptedMenu::pchange(int pos, int id, const Wordbook &wb) {
 void EncryptedMenu::gnr_fakeline(std::vector<int> &v, const Wordbook &wb,
                                  const int str_id) {
 
-  std::srand(std::time(0));
-
   for (auto i{0}; i < max_word; ++i) {
-    int new_wrd_pos{0};
+
+    auto rnd_line = []() { return std::rand() % max_lines; };
+    int new_wrd_pos{rnd_line()};
 
     // find next fake line
-    for (auto bid_cor{true}; bid_cor;) {
+    for (; std::find(v.begin(), v.end(), new_wrd_pos) != v.end();) {
 
-      bid_cor = false;
-      new_wrd_pos = std::rand() % max_lines;
-
-      std::for_each(v.begin(), v.end(), [&bid_cor, new_wrd_pos](const auto &e) {
-        bid_cor = bid_cor ? true : e == new_wrd_pos;
-      });
+      new_wrd_pos = rnd_line();
     }
 
     v.push_back(new_wrd_pos);
-    const int new_wrd_ind = str_id / 2 + std::rand() % max_word;
+
+    const int new_wrd_ind =
+        (str_id - max_word / 2) + std::rand() % (max_word / 2);
 
     pchange(new_wrd_pos, new_wrd_ind, wb);
   }
