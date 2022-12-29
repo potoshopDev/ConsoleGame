@@ -58,17 +58,17 @@ int main() {
       const std::string check_message{
           !game_run ? "Password is correct!" : "Entry denied. {}/{} correct"};
 
-      // check count attempts
-      game_run = curr_attemp < 1 && game_run ? !game_run : game_run;
-
       fmt::print(fmt::fg(fmt::color::green), check_message.c_str(), count_eql,
                  encrypted::max_char);
+
+      // check count attempts
+      game_run = curr_attemp < 1 && game_run ? !game_run : game_run;
 
       // print game status. continue or gameover
       if (game_run) {
         fmt::print(fmt::fg(menu.at(attempm_id)->get_color()),
                    menu.at(attempm_id)->to_str());
-      } else if (curr_attemp < 1) {
+      } else if (curr_attemp < 1 && count_eql != encrypted::max_char) {
 
         fmt::print(fmt::fg(fmt::color::orange_red),
                    "\nIncorrect PASSWORD. ACCESS DENIED");
