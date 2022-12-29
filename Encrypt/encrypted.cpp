@@ -120,7 +120,7 @@ EncryptedMenu::EncryptedMenu() {
   pchange(str_lns, str_wrd_ind, wb);
   ////////////////////
 
-  gnr_fakeline(tmp_lns, wb, str_wrd_ind);
+  gnr_fakelines(tmp_lns, wb, str_wrd_ind);
 }
 
 void EncryptedMenu::pchange(int pos, int id, const Wordbook &wb) {
@@ -129,8 +129,8 @@ void EncryptedMenu::pchange(int pos, int id, const Wordbook &wb) {
       std::make_unique<EncryptedLine>(EncryptedLine(wb.get_word(id)));
 }
 
-void EncryptedMenu::gnr_fakeline(std::vector<int> &v, const Wordbook &wb,
-                                 const int str_id) {
+void EncryptedMenu::gnr_fakelines(std::vector<int> &v, const Wordbook &wb,
+                                  const int str_id) {
 
   for (auto i{0}; i < max_word; ++i) {
 
@@ -164,5 +164,36 @@ const std::string EncryptedMenu::to_str() {
                   ++i;
                 });
   return tmp_str;
+}
+[[nodiscard]] int EncryptedMenu::check(const std::string &cw) const {
+  auto tmp_str{cw};
+  toupper_string(tmp_str);
+
+  auto tmp_eql{0};
+  std::equal(encrypted_wrd.begin(), encrypted_wrd.end(), tmp_str.begin(),
+             [&tmp_eql](const auto &e1, const auto &e2) {
+               if (e1 == e2)
+                 ++tmp_eql;
+               return true;
+             });
+
+  return tmp_eql;
+}
+
+int check_password(const Menu *encr_menu, const std::string &cw) {
+
+  auto em = static_cast<const EncryptedMenu *>(encr_menu);
+  if (!em)
+    error("Menu is not correct");
+
+  return em->check(cw);
+}
+[[nodiscard]] int update_attemp(Menu *attmp_menu) {
+
+  auto am = static_cast<AttemptMenu *>(attmp_menu);
+  if (!am)
+    error("Menu is not correct");
+
+  return am->get_m_attempt();
 }
 } // namespace encrypted
